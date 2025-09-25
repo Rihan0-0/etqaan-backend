@@ -54,7 +54,7 @@
   db.batch_scores.insertOne({
     batchId: ObjectId("batchId1"),
     studentId: ObjectId("studentId1"),
-    score: 82.3,
+    score: 82,
     breakdown: {
       attendance: 18, // or weighted value
       memorization: 35,
@@ -91,7 +91,6 @@
       evaluation: "ممتاز",
       score: 95
     },
-    presenceMarkedBy: ObjectId("teacherId"),
     notes: "تحسن واضح في التجويد",
     createdAt: new Date()
   });

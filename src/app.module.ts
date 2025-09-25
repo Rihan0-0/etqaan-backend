@@ -17,6 +17,7 @@ import { AppService } from './app.service';
 
 // Config
 import config from './config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import config from './config';
       }),
       inject: [ConfigService],
     }),
+    EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

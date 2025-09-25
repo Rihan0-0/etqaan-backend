@@ -26,9 +26,6 @@ export class BatchScore extends Document {
     revision: number;
     exams: number;
   };
-
-  @Prop()
-  lastEvaluatedAt?: Date;
 }
 
 export const BatchScoreSchema = SchemaFactory.createForClass(BatchScore);
