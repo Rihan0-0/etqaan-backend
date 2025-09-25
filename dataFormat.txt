@@ -1,0 +1,140 @@
+// ========== 1. Users (Students + Teachers) ==========
+
+  db.users.insertMany([
+    {
+      _id: ObjectId("studentId1"),
+      name: "محمد خالد",
+      username: "mohamed.khaled",
+      email: "m.khaled@example.com",
+      role: "student",
+      phone: "+201001234567",
+      parentPhone: "+201002345678",
+      parentName: "خالد عبد الله",
+      gender: "male",
+      birthDate: new Date("2010-06-15"),
+      profileAvatar: 3, // index of predefined Avatar
+      isActive: true,
+      Batches: [ObjectId("batchId1")],
+      createdAt: new Date(),
+      password:....
+    },
+    {
+      _id: ObjectId("teacherId"),
+      name: "الشيخ محمود علي",
+      username: "sheikh.mahmoud",
+      email: "mahmoud@example.com",
+      role: "teacher",
+      phone: "+201112223334",
+      gender: "male",
+      birthDate: new Date("1980-03-10"),
+      profileIcon: 1,
+      isActive: true,
+      Bathes: [ObjectId("batchId")]
+      bio: "حاصل على إجازة في قراءة حفص عن عاصم، خبرة 10 سنوات في التحفيظ",
+      qualifications: ["إجازة حفص", "دبلومة في التربية الإسلامية"],
+      createdAt: new Date(),
+       password: ....
+    }
+  ]);
+
+  // ========== 2. Batches ==========
+  db.batches.insertOne({
+    _id: ObjectId("batchId1"),
+    name: "دفعة جزء عم - السبت",
+    description: "تحفيظ جزء عم ومراجعة للطلاب من عمر 10 إلى 14 سنة",
+    rankingWeights: {
+      attendance: 0.2,
+      memorization: 0.4,
+      revision: 0.2,
+      exams: 0.2
+    },
+    createdAt: new Date()
+  });
+
+  db.batch_scores.insertOne({
+    batchId: ObjectId("batchId1"),
+    studentId: ObjectId("studentId1"),
+    score: 82.3,
+    breakdown: {
+      attendance: 18, // or weighted value
+      memorization: 35,
+      revision: 15,
+      exams: 14
+    },
+    updatedAt: new Date()
+  });
+
+  db.batch_memberships.insertOne({
+  batchId: ObjectId("batchId1"),
+  memberId: ObjectId("memberId1"),
+  role: "student",     // or "teacher"
+  joinedAt: new Date(),
+  leftAt: null
+  });
+
+  // ========== 3. Sessions ==========
+  db.sessions.insertOne({
+    date: new Date("2025-07-11"),
+    batchId: ObjectId("batchId1"),
+    teacherId: ObjectId("teacherId"),
+    studentId: ObjectId("studentId1"),
+    status: "present", // or "absent", "late"
+    memorization: {
+      from: "الأنفال:1",
+      to: "الأنفال:10",
+      evaluation: "جيد",
+      score: 80
+    },
+    revision: {
+      from: "الأنعام:1",
+      to: "الأنعام:10",
+      evaluation: "ممتاز",
+      score: 95
+    },
+    presenceMarkedBy: ObjectId("teacherId"),
+    notes: "تحسن واضح في التجويد",
+    createdAt: new Date()
+  });
+
+  // ========== 4. Exams (With Embedded Results) ==========
+  db.exams.insertOne({
+    _id: ObjectId("examId1"),
+    title: "امتحان مراجعة جزء عم",
+    description: "امتحان شفهي لكل الطلاب",
+    type: "oral",
+    batchId: ObjectId("batchId1"),
+    createdBy: ObjectId("teacherId"),
+    date: new Date("2025-07-15"),
+    content: {
+      from: "النبأ:1",
+      to: "النازعات:46"
+    },
+    results: [
+      {
+        studentId: ObjectId("studentId1"),
+        score: 88,
+        evaluation: "جيد جدًا",
+        notes: "أداء جيد مع بعض الأخطاء",
+        createdAt: new Date()
+      }
+    ],
+    createdAt: new Date()
+  });
+
+  // ========== 5. Notifications ==========
+  db.notifications.insertOne({
+    receiverId: ObjectId("studentId1"),
+    receiverRole: "student",
+    title: "تنبيه: تغيّب عن جلسة اليوم",
+    body: "لقد تغيّبت عن جلسة اليوم مع الشيخ محمود.",
+    type: "absence",
+    isRead: false,
+    relatedSessionId: ObjectId("sessionId"),
+    triggeredBy: ObjectId("teacherId"),
+    delivery: {
+      via: "whatsapp",
+      sent: true,
+      sentAt: new Date()
+    },
+    createdAt: new Date()
+  });
