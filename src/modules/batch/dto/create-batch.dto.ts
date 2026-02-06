@@ -1,31 +1,19 @@
-import { IsNotEmpty, MaxLength, IsOptional, ArrayNotEmpty, IsArray, IsMongoId } from 'class-validator';
-import { IsValidRankingWeights } from '../decorators/is-valid-ranking-weights.decorator';
+import { IsString, IsNotEmpty, IsInt, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateBatchDto {
-    @IsNotEmpty()
-    @MaxLength(100)
-    name: string;
+  @ApiProperty({ example: 1 })
+  @IsInt()
+  @IsNotEmpty()
+  term_id: number;
 
-    @IsOptional()
-    @MaxLength(255)
-    description?: string;
+  @ApiProperty({ example: 'Batch A - Quran' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsNotEmpty()
-    @IsValidRankingWeights({ message: 'Ranking weights are invalid' })
-    rankingWeights: {
-        attendance: number;
-        memorization: number;
-        revision: number;
-        exams: number;
-    };
-
-    @IsArray()
-    @ArrayNotEmpty()
-    @IsMongoId({ each: true })
-    teachersIds: string[];
-
-    @IsArray()
-    @ArrayNotEmpty()
-    @IsMongoId({ each: true })
-    studentsIds: string[];
+  @ApiProperty({ example: 'Mon/Wed 5PM', required: false })
+  @IsString()
+  @IsOptional()
+  schedule_description?: string;
 }

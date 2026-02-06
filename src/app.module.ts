@@ -8,6 +8,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
+import { StudentModule } from './modules/student/student.module';
+import { BatchModule } from './modules/batch/batch.module';
+import { DailyRecordModule } from './modules/daily-record/daily-record.module';
+import { ExamModule } from './modules/exam/exam.module';
 
 // Controllers
 import { AppController } from './app.controller';
@@ -29,6 +33,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     }),
     PrismaModule,
     EventEmitterModule.forRoot(),
+    StudentModule,
+    BatchModule,
+    DailyRecordModule,
+    ExamModule,
   ],
   controllers: [AppController],
   providers: [AppService],
