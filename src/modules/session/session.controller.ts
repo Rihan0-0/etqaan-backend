@@ -4,12 +4,10 @@ import { SessionService } from './session.service';
 
 @Controller('session')
 export class SessionController {
+  constructor(private readonly sessionService: SessionService) {}
 
-    constructor(private readonly sessionService: SessionService) { }
-
-    @Post()
-    async createSession(@Body() createSessionDto: CreateSessionDto) {
-        return await this.sessionService.create(createSessionDto);
-    }
+  // @Post()
+  // async createSession(@Body() createSessionDto: CreateSessionDto) {
+  //     return await this.sessionService.create(createSessionDto);
+  // }
 }
-    

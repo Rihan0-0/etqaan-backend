@@ -36,9 +36,7 @@ export class RolesGuard extends JwtAuthGuard implements CanActivate {
 
     this.logger.log(`currentLoggedInUser: ', ${user}`);
 
-    const hasRole = requiredRoles.some((role) =>
-      user.accessRole.includes(role),
-    ); // Check if user has required role
+    const hasRole = requiredRoles.some((role) => user.role === role);
     if (!hasRole) {
       throw new ForbiddenException('User does not have permission');
     }

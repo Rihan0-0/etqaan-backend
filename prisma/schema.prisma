@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. USERS TABLE
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(255)
+  email      String   @unique @db.VarChar(255)
+  password   String   @db.VarChar(255)
+  role       Role
+  created_at DateTime @default(now()) @db.Timestamp(6)
+
+  // Relations
+  student       Student?
+  batch_sheikhs BatchSheikh[]
+
+  @@map("users")
+}
+
+enum Role {
+  super_admin
+  admin
+  sheikh
+  student
+}
+
+// 2. TERMS TABLE
+model Term {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  start_date DateTime @db.Date
+  end_date   DateTime @db.Date
+  is_active  Boolean? @default(true)
+
+  // Relations
+  batches Batch[]
+
+  @@map("terms")
+}
+
+// 3. STUDENTS TABLE
+model Student {
+  id             Int       @id @default(autoincrement())
+  full_name      String    @db.VarChar(255)
+  dob            DateTime? @db.Date
+  gender         Gender
+  guardian_name  String?   @db.VarChar(255)
+  guardian_phone String?   @db.VarChar(50)
+  user_id        Int?      @unique
+  created_at     DateTime  @default(now()) @db.Timestamp(6)
+
+  // Relations
+  user           User?          @relation(fields: [user_id], references: [id])
+  batch_students BatchStudent[]
+
+  @@map("students")
+}
+
+enum Gender {
+  male
+  female
+}
+
+// 4. BATCHES TABLE
+model Batch {
+  id                   Int     @id @default(autoincrement())
+  term_id              Int
+  name                 String  @db.VarChar(255)
+  schedule_description String? @db.Text
+
+  // Relations
+  term          Term           @relation(fields: [term_id], references: [id], onDelete: Cascade)
+  batch_sheikhs BatchSheikh[]
+  batch_students BatchStudent[]
+  exams         Exam[]
+
+  @@map("batches")
+}
+
+// 5. BATCH_SHEIKHS
+model BatchSheikh {
+  id             Int      @id @default(autoincrement())
+  batch_id       Int
+  sheikh_id      Int
+  is_head_sheikh Boolean? @default(false)
+
+  // Relations
+  batch  Batch @relation(fields: [batch_id], references: [id], onDelete: Cascade)
+  sheikh User  @relation(fields: [sheikh_id], references: [id], onDelete: Cascade)
+
+  @@map("batch_sheikhs")
+}
+
+// 6. BATCH_STUDENTS
+model BatchStudent {
+  id            Int      @id @default(autoincrement())
+  batch_id      Int
+  student_id    Int
+  league_points Int?     @default(0)
+  joined_at     DateTime @default(now()) @db.Timestamp(6)
+
+  // Relations
+  batch   Batch   @relation(fields: [batch_id], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  
+  daily_records DailyRecord[]
+  exam_results  ExamResult[]
+
+  @@map("batch_students")
+}
+
+// 7. DAILY_RECORDS
+model DailyRecord {
+  id                Int              @id @default(autoincrement())
+  batch_student_id  Int
+  record_date       DateTime         @db.Date
+  attendance_status AttendanceStatus? @default(absent)
+  jadeed_range      String?          @db.VarChar(255)
+  jadeed_grade      Grade?
+  muraja_range      String?          @db.VarChar(255)
+  muraja_grade      Grade?
+  behavior_note     String?          @db.Text
+  bonus_points      Int?             @default(0)
+
+  // Relations
+  batch_student BatchStudent @relation(fields: [batch_student_id], references: [id], onDelete: Cascade)
+
+  @@map("daily_records")
+}
+
+enum AttendanceStatus {
+  present
+  absent
+  late
+  excused
+}
+
+enum Grade {
+  excellent
+  very_good
+  good
+  acceptable
+  weak
+  redo
+}
+
+// 8. EXAMS TABLE
+model Exam {
+  id        Int      @id @default(autoincrement())
+  batch_id  Int
+  title     String   @db.VarChar(255)
+  max_score Int?     @default(100)
+  exam_date DateTime @db.Date
+
+  // Relations
+  batch        Batch        @relation(fields: [batch_id], references: [id], onDelete: Cascade)
+  exam_results ExamResult[]
+
+  @@map("exams")
+}
+
+// 9. EXAM_RESULTS
+model ExamResult {
+  id               Int     @id @default(autoincrement())
+  exam_id          Int
+  batch_student_id Int
+  score            Decimal @db.Decimal(5, 2)
+
+  // Relations
+  exam          Exam         @relation(fields: [exam_id], references: [id], onDelete: Cascade)
+  batch_student BatchStudent @relation(fields: [batch_student_id], references: [id], onDelete: Cascade)
+
+  @@map("exam_results")
+}

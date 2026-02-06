@@ -1,56 +1,22 @@
-// Lib
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Role } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
 
-// Enums
-import { UserGender } from 'src/common/enums/user-gender.enum';
-import { UserRole } from 'src/common/enums/user-role.enum';
-
-export type UserDocument = User & Document;
-
-@Schema()
 export class User {
-  @Prop({ required: true })
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
   name: string;
 
-  @Prop({ required: true })
-  username: string;
-
-  @Prop({ required: true })
-  password: string;
-
-  @Prop({ required: true, unique: true })
+  @ApiProperty()
   email: string;
 
-  @Prop({ required: true, enum: UserRole })
-  role: UserRole;
+  @ApiProperty()
+  password?: string;
 
-  @Prop({ required: true })
-  phone?: string;
+  @ApiProperty({ enum: Role })
+  role: Role;
 
-  @Prop()
-  parentPhone?: string;
-
-  @Prop({ enum: UserGender })
-  gender?: UserGender;
-
-  @Prop({ type: Date })
-  birthDate?: Date;
-
-  @Prop()
-  profileAvatar?: number;
-
-  @Prop({ default: true })
-  isActive: boolean;
-
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Batch' }] }) // May Be updated in future
-  joinedBatches: MongooseSchema.Types.ObjectId[];
-
-  @Prop([String])
-  qualifications?: string[];
-
-  @Prop()
-  bio?: string;
+  @ApiProperty()
+  created_at: Date;
 }
-
-export const UserSchema = SchemaFactory.createForClass(User);

@@ -3,11 +3,11 @@ import { Module } from '@nestjs/common';
 
 // Lib
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
 
 // Modules
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { PrismaModule } from './modules/prisma/prisma.module';
 
 // Controllers
 import { AppController } from './app.controller';
@@ -27,13 +27,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       isGlobal: true,
       load: config, // loads from config/index.ts
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('mongoUri'),
-      }),
-      inject: [ConfigService],
-    }),
+    PrismaModule,
     EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],

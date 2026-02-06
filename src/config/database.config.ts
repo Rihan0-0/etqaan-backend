@@ -1,3 +1,5 @@
 export default () => ({
-  mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/rihaan',
+  databaseUrl:
+    process.env.DATABASE_URL ||
+    'postgresql://postgres:postgres@localhost:5432/rihaan',
 });

@@ -1,28 +1,33 @@
-// Nest js
 import { Injectable } from '@nestjs/common';
-
-// Lub
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-
-// Entities
-import { User, UserDocument } from '../entities/user.entity';
+import { PrismaService } from '../../prisma/prisma.service';
+import { User } from '../entities/user.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserRepository {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async createOne(data: Partial<User>): Promise<UserDocument> {
-    return await this.userModel.create(data);
+  async createOne(data: Prisma.UserCreateInput): Promise<User> {
+    return await this.prisma.user.create({
+      data,
+    });
   }
 
-  async getOne(filter: object): Promise<UserDocument | null> {
-    return await this.userModel.findOne(filter).exec();
+  async getOne(where: Prisma.UserWhereInput): Promise<User | null> {
+    return await this.prisma.user.findFirst({
+      where,
+    });
   }
 
-  async getMany(filter: object = {}): Promise<UserDocument[]> {
-    return await this.userModel.find(filter).exec();
+  async getMany(where: Prisma.UserWhereInput = {}): Promise<User[]> {
+    return await this.prisma.user.findMany({
+      where,
+    });
+  }
+
+  async deleteOne(where: Prisma.UserWhereUniqueInput): Promise<User> {
+    return await this.prisma.user.delete({
+      where,
+    });
   }
 }

@@ -14,6 +14,10 @@ import { User } from '../user/entities/user.entity';
 // Repositories
 import { UserRepository } from '../user/repositories/user.repository';
 
+interface AuthPayload {
+  id: number;
+}
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -32,16 +36,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     try {
       const user = await this.userRepo.getOne({
         id: payload.id,
-        isActive: true,
       });
 
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
 
-      return {
-        ...user,
-      };
+      return user;
     } catch (error) {
       throw new UnauthorizedException('Invalid token or user not found');
     }
