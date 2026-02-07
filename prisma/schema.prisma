@@ -75,10 +75,10 @@ model Batch {
   schedule_description String? @db.Text
 
   // Relations
-  term          Term           @relation(fields: [term_id], references: [id], onDelete: Cascade)
-  batch_sheikhs BatchSheikh[]
+  term           Term           @relation(fields: [term_id], references: [id], onDelete: Cascade)
+  batch_sheikhs  BatchSheikh[]
   batch_students BatchStudent[]
-  exams         Exam[]
+  exams          Exam[]
 
   @@map("batches")
 }
@@ -108,7 +108,7 @@ model BatchStudent {
   // Relations
   batch   Batch   @relation(fields: [batch_id], references: [id], onDelete: Cascade)
   student Student @relation(fields: [student_id], references: [id], onDelete: Cascade)
-  
+
   daily_records DailyRecord[]
   exam_results  ExamResult[]
 
@@ -117,16 +117,16 @@ model BatchStudent {
 
 // 7. DAILY_RECORDS
 model DailyRecord {
-  id                Int              @id @default(autoincrement())
+  id                Int               @id @default(autoincrement())
   batch_student_id  Int
-  record_date       DateTime         @db.Date
+  record_date       DateTime          @db.Date
   attendance_status AttendanceStatus? @default(absent)
-  jadeed_range      String?          @db.VarChar(255)
+  jadeed_range      String?           @db.VarChar(255)
   jadeed_grade      Grade?
-  muraja_range      String?          @db.VarChar(255)
+  muraja_range      String?           @db.VarChar(255)
   muraja_grade      Grade?
-  behavior_note     String?          @db.Text
-  bonus_points      Int?             @default(0)
+  behavior_note     String?           @db.Text
+  bonus_points      Int?              @default(0)
 
   // Relations
   batch_student BatchStudent @relation(fields: [batch_student_id], references: [id], onDelete: Cascade)
