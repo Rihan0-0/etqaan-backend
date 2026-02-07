@@ -24,28 +24,25 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Create a non-root user
+# Create a non-root user with home directory
 RUN addgroup -g 10014 choreo && \
-    adduser -D -u 10014 -G choreo choreouser
+    adduser -D -u 10014 -G choreo -h /home/choreouser choreouser && \
+    mkdir -p /home/choreouser/.npm && \
+    chown -R 10014:10014 /home/choreouser
 
 # Copy package files
-COPY package*.json ./
+COPY --chown=10014:10014 package*.json ./
+
+# Switch to non-root user before installing
+USER 10014
 
 # Install production dependencies only
 RUN npm ci --only=production
 
-# Copy Prisma schema
-COPY prisma ./prisma/
-
-# Copy built application from builder
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-
-# Change ownership to non-root user
-RUN chown -R 10014:10014 /app
-
-# Switch to non-root user
-USER 10014
+# Copy Prisma schema and built files as choreouser
+COPY --chown=10014:10014 prisma ./prisma/
+COPY --from=builder --chown=10014:10014 /app/dist ./dist
+COPY --from=builder --chown=10014:10014 /app/node_modules/.prisma ./node_modules/.prisma
 
 # Expose port
 EXPOSE 3000
