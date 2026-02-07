@@ -18,6 +18,17 @@ export class ExamService {
     });
   }
 
+  async findOne(id: number) {
+    const exam = await this.prisma.exam.findUnique({
+      where: { id },
+      include: {
+        exam_results: true,
+      },
+    });
+    if (!exam) throw new NotFoundException('Exam not found');
+    return exam;
+  }
+
   async addResults(examId: number, dto: BulkExamResultDto) {
     const exam = await this.prisma.exam.findUnique({ where: { id: examId } });
     if (!exam) throw new NotFoundException('Exam not found');

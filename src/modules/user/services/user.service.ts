@@ -14,6 +14,34 @@ import { Role } from '@prisma/client';
 export class UserService {
   constructor(private readonly userRepo: UserRepository) {}
 
+  async getAll(currentUserRole: Role): Promise<Omit<User, 'password'>[]> {
+    const users = await this.userRepo.getMany();
+    // Remove hashed passwords
+    // Super admin can see all plain passwords
+    // Admin can only see passwords of sheikh and student users
+    return users.map(({ password, plain_password, ...user }) => {
+      // Super admin sees all passwords
+      if (currentUserRole === Role.super_admin) {
+        return { ...user, plain_password };
+      }
+      // Admin cannot see admin or super_admin passwords
+      if (user.role === Role.admin || user.role === Role.super_admin) {
+        return { ...user, plain_password: null };
+      }
+      // Admin can see sheikh/student passwords
+      return { ...user, plain_password };
+    });
+  }
+
+  async getStats(): Promise<{
+    totalUsers: number;
+    byRole: Record<string, number>;
+  }> {
+    const totalUsers = await this.userRepo.count();
+    const byRole = await this.userRepo.countByRole();
+    return { totalUsers, byRole };
+  }
+
   async createUser(dto: CreateUserDto, currentUserRole: Role): Promise<User> {
     // Check if email exists
     const existingUser = await this.userRepo.getOne({ email: dto.email });
@@ -42,6 +70,7 @@ export class UserService {
     return this.userRepo.createOne({
       ...dto,
       password: hashedPassword,
+      plain_password: dto.password, // Store plain password for admin viewing
     });
   }
 
@@ -68,11 +97,7 @@ export class UserService {
       if (userToDelete.role === Role.super_admin) {
         throw new ForbiddenException('Admins cannot delete Super Admins');
       }
-      // Admin cannot delete other Admins (User requirement: "bc no admin can delete his account" - implies protection for admins?
-      // Usually admins can delete lower roles. User said "make like there is an super admin bc no admin can delete his account".
-      // This phrasing suggests a Super Admin is needed specifically to handle Admin lifecycles or to be the ONE who can't be deleted?
-      // I'll assume Admin can delete Student/Sheikh. Admin vs Admin?
-      // Prudent approach: Admin cannot delete other Admins. Only Super Admin can delete Admins.
+      // Admin cannot delete other Admins
       if (userToDelete.role === Role.admin) {
         throw new ForbiddenException('Admins cannot delete other Admins');
       }
@@ -81,11 +106,6 @@ export class UserService {
         'You do not have permission to delete users',
       );
     }
-
-    // We don't have delete method in repository yet. We need it.
-    // For now I'll create the logic but I need to update repo.
-    // Since repo only has createOne, getOne, getMany.
-    // I need to add delete method to UserRepository.
 
     return await this.userRepo.deleteOne({ id });
   }

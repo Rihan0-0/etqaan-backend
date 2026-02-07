@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  ParseIntPipe,
+  Get,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ExamService } from '../services/exam.service';
 import { CreateExamDto } from '../dtos/create-exam.dto';
@@ -22,5 +29,11 @@ export class ExamController {
     @Body() dto: BulkExamResultDto,
   ) {
     return this.examService.addResults(id, dto);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get exam by id' })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.examService.findOne(id);
   }
 }

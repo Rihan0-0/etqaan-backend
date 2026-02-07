@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   UseGuards,
   Request,
@@ -29,6 +30,28 @@ import { Role } from '@prisma/client';
 @ApiBearerAuth()
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get()
+  @Roles('admin', 'super_admin')
+  @ApiOperation({ summary: 'Get all users (Admin/Super Admin only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of users',
+  })
+  async getAll(@Request() req) {
+    return this.userService.getAll(req.user.role);
+  }
+
+  @Get('stats')
+  @Roles('admin', 'super_admin')
+  @ApiOperation({ summary: 'Get user statistics for admin dashboard' })
+  @ApiResponse({
+    status: 200,
+    description: 'User statistics',
+  })
+  async getStats() {
+    return this.userService.getStats();
+  }
 
   @Post()
   @Roles('admin', 'super_admin')

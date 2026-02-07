@@ -14,6 +14,9 @@ export class User {
   @ApiProperty()
   password?: string;
 
+  @ApiProperty({ required: false })
+  plain_password?: string | null;
+
   @ApiProperty({ enum: Role })
   role: Role;
 
