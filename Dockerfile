@@ -13,8 +13,8 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
+# Generate Prisma Client (no URL needed for generate)
+RUN npx prisma generate --no-hints
 
 # Build the application
 RUN npm run build
@@ -51,5 +51,5 @@ COPY --from=builder --chown=10014:10014 /app/node_modules/.prisma ./node_modules
 # Expose port
 EXPOSE 3000
 
-# Run migrations and start
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+# Run migrations and start (pass URL directly to migrate command)
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=prisma/schema.prisma && node dist/main.js"]
