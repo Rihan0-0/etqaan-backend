@@ -12,6 +12,8 @@ import { StudentModule } from './modules/student/student.module';
 import { BatchModule } from './modules/batch/batch.module';
 import { DailyRecordModule } from './modules/daily-record/daily-record.module';
 import { ExamModule } from './modules/exam/exam.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { SessionModule } from './modules/session/session.module';
 
 // Controllers
 import { AppController } from './app.controller';
@@ -37,6 +39,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     BatchModule,
     DailyRecordModule,
     ExamModule,
+    AdminModule,
+    SessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

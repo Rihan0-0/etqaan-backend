@@ -17,8 +17,8 @@ async function bootstrap() {
 
   // Doc
   const config = new DocumentBuilder()
-    .setTitle('Rihaan API')
-    .setDescription('API documentation for Rihaan')
+    .setTitle('Etqaan API')
+    .setDescription('API documentation for Etqaan')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
