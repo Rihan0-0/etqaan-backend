@@ -51,5 +51,6 @@ COPY --from=builder --chown=10014:10014 /app/node_modules/.prisma ./node_modules
 # Expose port
 EXPOSE 3000
 
-# Run migrations and start (pass URL directly to migrate command)
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=prisma/schema.prisma && node dist/main.js"]
+# Skip migrations in Docker, run them separately or use a migration job
+# Just start the application - DATABASE_URL will be read from environment
+CMD ["node", "dist/main.js"]
