@@ -28,16 +28,17 @@ WORKDIR /app
 RUN addgroup -g 10014 choreo && \
     adduser -D -u 10014 -G choreo -h /home/choreouser choreouser && \
     mkdir -p /home/choreouser/.npm && \
-    chown -R 10014:10014 /home/choreouser
+    chown -R 10014:10014 /home/choreouser && \
+    chown -R 10014:10014 /app
 
 # Copy package files
 COPY --chown=10014:10014 package*.json ./
 
-# Switch to non-root user before installing
+# Switch to non-root user
 USER 10014
 
 # Install production dependencies only
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Copy Prisma schema and built files as choreouser
 COPY --chown=10014:10014 prisma ./prisma/
