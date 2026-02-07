@@ -24,19 +24,21 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Create a non-root user with home directory and set up npm cache
+# Create a non-root user with home directory
 RUN addgroup -g 10014 choreo && \
     adduser -D -u 10014 -G choreo -h /home/choreouser choreouser && \
-    chown -R 10014:10014 /home/choreouser /app
+    chown -R 10014:10014 /app && \
+    mkdir -p /tmp/.npm && \
+    chown -R 10014:10014 /tmp/.npm
+
+# Copy package files
+COPY --chown=10014:10014 package*.json ./
 
 # Switch to non-root user
 USER 10014
 
-# Set npm cache to a writable location
-ENV npm_config_cache=/home/choreouser/.npm
-
-# Copy package files
-COPY --chown=10014:10014 package*.json ./
+# Set npm cache to writable /tmp directory
+ENV npm_config_cache=/tmp/.npm
 
 # Install production dependencies only
 RUN npm ci --omit=dev
