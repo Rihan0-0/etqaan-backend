@@ -13,6 +13,7 @@ import { BatchService } from '../services/batch.service';
 import { CreateBatchDto } from '../dto/create-batch.dto';
 import { EnrollStudentDto } from '../dto/enroll-student.dto';
 import { AssignSheikhDto } from '../dto/assign-sheikh.dto';
+import { BulkEnrollDto } from '../dto/bulk-enroll.dto';
 
 @ApiTags('Batches')
 @Controller('batches')
@@ -58,6 +59,15 @@ export class BatchController {
     return this.batchService.enrollStudent(id, dto.studentId);
   }
 
+  @Post(':id/bulk-enroll')
+  @ApiOperation({ summary: 'Bulk enroll students in a batch' })
+  bulkEnroll(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: BulkEnrollDto,
+  ) {
+    return this.batchService.bulkEnroll(id, dto.studentIds);
+  }
+
   @Post(':id/assign-sheikh')
   @ApiOperation({ summary: 'Assign a sheikh to a batch' })
   assignSheikh(
@@ -71,5 +81,11 @@ export class BatchController {
   @ApiOperation({ summary: 'Get leaderboard for a batch' })
   getLeaderboard(@Param('id', ParseIntPipe) id: number) {
     return this.batchService.getLeaderboard(id);
+  }
+
+  @Post(':id/recalculate')
+  @ApiOperation({ summary: 'Recalculate batch scores' })
+  recalculate(@Param('id', ParseIntPipe) id: number) {
+    return this.batchService.recalculateScores(id);
   }
 }

@@ -48,4 +48,42 @@ export class StudentService {
     await this.findOne(id);
     return this.prisma.student.delete({ where: { id } });
   }
+
+  async getHistory(studentId: number, batchId?: number) {
+    await this.findOne(studentId);
+
+    const whereClause = {
+      batch_student: {
+        student_id: studentId,
+        ...(batchId ? { batch_id: batchId } : {}),
+      },
+    };
+
+    const dailyRecords = await this.prisma.dailyRecord.findMany({
+      where: whereClause,
+      orderBy: { record_date: 'desc' },
+      include: {
+        batch_student: {
+          include: {
+            batch: true,
+          },
+        },
+      },
+    });
+
+    const examResults = await this.prisma.examResult.findMany({
+      where: whereClause,
+      orderBy: { exam: { exam_date: 'desc' } },
+      include: {
+        exam: true,
+        batch_student: {
+          include: {
+            batch: true,
+          },
+        },
+      },
+    });
+
+    return { dailyRecords, examResults };
+  }
 }

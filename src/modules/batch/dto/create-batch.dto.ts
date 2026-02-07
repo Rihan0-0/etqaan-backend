@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsInt, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsInt,
+  IsOptional,
+  IsArray,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateBatchDto {
@@ -16,4 +22,13 @@ export class CreateBatchDto {
   @IsString()
   @IsOptional()
   schedule_description?: string;
+
+  @ApiProperty({
+    example: [1, 2],
+    required: false,
+    description: 'Array of sheikh user IDs to assign',
+  })
+  @IsArray()
+  @IsOptional()
+  sheikh_ids?: number[];
 }

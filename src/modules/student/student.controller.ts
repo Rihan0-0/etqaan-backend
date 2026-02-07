@@ -52,4 +52,17 @@ export class StudentController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.studentService.remove(id);
   }
+
+  @Get(':id/history')
+  @ApiOperation({ summary: 'Get student history (attendance and exams)' })
+  @ApiQuery({ name: 'batchId', required: false, type: Number })
+  getHistory(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('batchId') batchId?: string,
+  ) {
+    return this.studentService.getHistory(
+      id,
+      batchId ? parseInt(batchId) : undefined,
+    );
+  }
 }
