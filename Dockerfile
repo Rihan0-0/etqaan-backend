@@ -53,4 +53,4 @@ EXPOSE 3000
 
 # Skip migrations in Docker, run them separately or use a migration job
 # Just start the application - DATABASE_URL will be read from environment
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]
